@@ -5,25 +5,17 @@ with open('hosts/blocked_websites_au.tmp', 'w') as hosts_tmp:
     with open('hosts/blocked_websites_au', 'r') as hosts:
         for line in hosts:
             line = line.rstrip("\n")
-            line_ips = set(line.split(" ")[1:])
-            ips = ""
+            line_ip = line.split(" ")[0]
+            print(line_ip)
 
             try:
                 new_line = socket.gethostbyname_ex(line.split(" ")[0])
 
-
-                new_line_ips = set(new_line[2])
-
-                if line_ips == new_line_ips or line_ips.issuperset(new_line_ips):
+                if line_ip in new_line[2]:
                     hosts_tmp.write(line + "\n")
                     print("They are the same")
                 else:
-                    new_ips = line_ips.union(new_line_ips)
-
-                    for ip in new_ips:
-                        ips += ip + " "
-                    new_line_to_write = new_line[0] + " " + ips.rstrip(" ") + "\n"
-
+                    new_line_to_write = new_line[2][0] + " " + new_line[0] + "\n"
                     hosts_tmp.write(new_line_to_write)
                     print("Hey! There is a new line!")
                     to_git = True
