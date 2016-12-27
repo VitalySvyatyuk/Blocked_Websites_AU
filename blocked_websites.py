@@ -1,4 +1,4 @@
-import socket, os, shutil
+import socket, os, shutil, datetime
 
 to_git = False
 with open('hosts/blocked_websites_au.tmp', 'w') as hosts_tmp:
@@ -42,3 +42,20 @@ shutil.move('hosts/blocked_websites_au.tmp', 'hosts/blocked_websites_au')
 #         content = f.read()
 #         f.seek(0, 0)
 #         f.write(line.rstrip('\r\n') + '\n' + content)
+
+
+
+import smtplib
+from email.mime.text import MIMEText
+
+computername = os.getenv('COMPUTERNAME')
+msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+msg['Subject'] = 'Test from {}!'.format(computername)
+email_from = '{}@test.com'.format(computername)
+email_to = 'vetal_sv@bk.ru'
+msg['From'] = email_from
+msg['To'] = email_to
+
+s = smtplib.SMTP('127.0.0.1')
+s.sendmail(email_from, [email_to], msg.as_string())
+s.quit()
