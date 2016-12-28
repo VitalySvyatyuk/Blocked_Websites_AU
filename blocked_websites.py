@@ -64,7 +64,7 @@ if to_git:
             readme.write("\n")         
             readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " --->")
             for val in values:
-                readme.write("\n" + val)
+                readme.write("\n\n" + val)
             readme.write("\n")
     
 
@@ -72,8 +72,6 @@ if to_git:
     git.add('*')
     git.commit(m='Update ' + str(datetime.datetime.now())[:19])
     git.push('origin', 'master')
-
-
 
 
 # # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
