@@ -24,14 +24,14 @@ thepiratebay.xn--q9jyb4c 104.31.18.30 104.31.19.30
 thepirateboat.eu 104.31.19.30 104.31.18.30
 tpbmirror.us 104.31.18.30 104.31.19.30
 urbanproxy.eu 104.31.18.30 104.31.19.30
-torrentsmirror.com 85.195.102.27
-torrentz.ch 185.87.146.3
-torrentz.com 85.195.102.27
-torrentz.hk 185.87.146.3
-torrentz.in 85.195.102.27
-torrentz.ph 185.87.146.3
-torrentz-proxy.com 185.87.146.3
-tz.ai 85.195.102.27
+torrentsmirror.com 85.195.102.27 185.87.146.3
+torrentz.ch 185.87.146.3 85.195.102.27
+torrentz.com 85.195.102.27 185.87.146.3
+torrentz.hk 185.87.146.3 85.195.102.27
+torrentz.in 85.195.102.27 185.87.146.3
+torrentz.ph 185.87.146.3 85.195.102.27
+torrentz-proxy.com 185.87.146.3 85.195.102.27
+tz.ai 85.195.102.27 185.87.146.3
 torrenthound.com 104.31.18.30 104.31.19.30
 torrenthound.immunicity.info 185.53.178.7
 torrenthound.to 88.196.8.176
