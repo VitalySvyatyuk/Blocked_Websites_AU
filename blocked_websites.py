@@ -10,7 +10,20 @@ for file in os.listdir("hosts"):
         PATH_TO_FILE_VARS = 'hosts/' + file + '_vars'
 
         if not os.path.isfile(PATH_TO_FILE_VARS):
-            shutil.copy(PATH_TO_FILE, PATH_TO_FILE_VARS)
+            os.mknod(PATH_TO_FILE_VARS)
+            with open(PATH_TO_FILE_VARS, 'w') as to_vars:
+                with open(PATH_TO_FILE, 'r') as _vars:
+                    for _var in _vars:
+                        try:
+                            var = socket.gethostbyname_ex(_var.split(" ")[1].rstrip("\n"))
+                            ips = ""
+                            for ip in var[2]:
+                                ips += ip + " "
+                            to_vars.write(var[0] + " " + ips + "\n")
+
+                        except:
+                            pass
+
         if not os.path.isfile(PATH_TO_FILE_TMP):
             os.mknod(PATH_TO_FILE_TMP)
 
@@ -19,7 +32,7 @@ for file in os.listdir("hosts"):
         print(hosts_vars)
         with open(PATH_TO_FILE_TMP, 'w') as hosts_tmp:
             with open(PATH_TO_FILE, 'r') as hosts:
-
+                wit
                 update_lines = []
                 for line in hosts:
                     line = line.rstrip("\n")
