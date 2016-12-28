@@ -71,7 +71,7 @@ if to_git:
     git = sh.git.bake(_cwd=os.getcwd())
     git.add('*')
     git.commit(m='Update ' + str(datetime.datetime.now())[:19])
-    git.push('origin', 'master')
+    git.push('synaptec', 'master')
 
 
 # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
