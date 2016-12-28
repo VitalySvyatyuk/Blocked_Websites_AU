@@ -1,106 +1,84 @@
 import socket, os, shutil, datetime
-
-
+ 
 to_git = False
 updates = {}
-for file in os.listdir("hosts"):
-    if not file.endswith('_vars') or file.endswith('.tmp'):
-        PATH_TO_FILE_TMP = 'hosts/' + file + '.tmp'
-        PATH_TO_FILE = 'hosts/' + file
-        PATH_TO_FILE_VARS = 'hosts/' + file + '_vars'
-
-        if not os.path.isfile(PATH_TO_FILE_VARS):
-            os.mknod(PATH_TO_FILE_VARS)
-            with open(PATH_TO_FILE_VARS, 'w') as to_vars:
-                with open(PATH_TO_FILE, 'r') as _vars:
-                    for _var in _vars:
-                        try:
-                            var = socket.gethostbyname_ex(_var.split(" ")[1].rstrip("\n"))
-                            ips = ""
-                            for ip in var[2]:
-                                ips += ip + " "
-                            to_vars.write(var[0] + " " + ips + "\n")
-
-                        except:
-                            pass
+for file in os.listdir("vars"):
+    if file.endswith("_vars"):
+        PATH_TO_FILE = 'hosts/' + file.rstrip("_vars")
+        PATH_TO_FILE_TMP = 'vars/' + file.rstrip("_vars") + ".tmp"
+        PATH_TO_FILE_VARS = 'vars/' + file
 
         if not os.path.isfile(PATH_TO_FILE_TMP):
             os.mknod(PATH_TO_FILE_TMP)
 
-        with open(PATH_TO_FILE_VARS, 'r') as hosts_vars:
-            pass
-        print(hosts_vars)
         with open(PATH_TO_FILE_TMP, 'w') as hosts_tmp:
-            with open(PATH_TO_FILE, 'r') as hosts:
-                wit
+            with open(PATH_TO_FILE_VARS, 'r') as _vars:
                 update_lines = []
-                for line in hosts:
+                for line in _vars:
                     line = line.rstrip("\n")
-                    line_ip = line.split(" ")[0]
-
+                    line_ips = set(line.split(" ")[1:])
+                    ips = ""
+         
                     try:
-                        new_line = socket.gethostbyname_ex(line.split(" ")[1])
-                        print(new_line)
-                        print(line_ip)
+                        new_line = socket.gethostbyname_ex(line.split(" ")[0])
 
-                        if line_ip in new_line[2]: #or line_ip in vars:
+                        new_line_ips = set(new_line[2])
+
+                        if line_ips == new_line_ips or line_ips.issuperset(new_line_ips):
                             hosts_tmp.write(line + "\n")
-                            print("They are the same")
+                            print "They are the same"
                         else:
-                            new_line_to_write = new_line[2][0] + " " + new_line[0] + "\n"
+                            new_ips = line_ips.union(new_line_ips)
+         
+                            for ip in new_ips:
+                                ips += ip + " "
+                            new_line_to_write = new_line[0] + " " + ips.rstrip(" ") + "\n"
+         
                             hosts_tmp.write(new_line_to_write)
-                            print("Hey! There is a new line!->>>>>>>>>>>>")
+                            print "Hey! There is a new line!->>>>>>>>>>"
                             to_git = True
-                            update_lines.append(new_line[0] + " -> from " + line_ip + " to " + new_line[2][0])
+                            update_lines.append(new_line[0])
                     except (socket.gaierror, socket.herror):
                         pass
                 if len(update_lines) != 0:
                     updates[file] = update_lines
 
-        shutil.move(PATH_TO_FILE_TMP, PATH_TO_FILE)
+        shutil.move(PATH_TO_FILE_TMP, PATH_TO_FILE_VARS)
         if os.path.isfile(PATH_TO_FILE_TMP):
             os.remove(PATH_TO_FILE_TMP)
 
-print(updates)
+        if not os.path.isfile(PATH_TO_FILE):
+            shutil.mknod(PATH_TO_FILE)
+
+        with open(PATH_TO_FILE_VARS, 'r') as _vars:
+            with open(PATH_TO_FILE, 'w') as hosts:
+                for _var in _vars:
+                    new_host_line = _var.split(" ")[1].rstrip("\n") + " " + _var.split(" ")[0]
+                    hosts.write(new_host_line + "\n")
+print updates
+
 if to_git:
     with open('README.md', 'a') as readme:
         for key, values in updates.items():  
             readme.write("\n")         
-            readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " : ")
+            readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " --->")
             for val in values:
                 readme.write("\n" + val)
             readme.write("\n")
-
-# print(new_lines)
-# if len(new_lines) > 0:
-#     with open('new_file.txt', 'w') as new_file:
-#         for new_line in new_lines:
-#             ips = ""
-#             for ip in new_line[2]:
-#                 ips += ip + " "
-#             line = new_line[0] + " " + ips.rstrip(" ") + "\n"
-#             new_file.write(line)
-
-# def line_prepender(filename, line):
-#     with open(filename, 'r+') as f:
-#         content = f.read()
-#         f.seek(0, 0)
-#         f.write(line.rstrip('\r\n') + '\n' + content)
-
-
+ 
 
 # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
-# import smtplib
-# from email.mime.text import MIMEText
+import smtplib
+from email.mime.text import MIMEText
 
-# computername = os.getenv('COMPUTERNAME')
-# msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
-# msg['Subject'] = 'Test from {}!'.format(computername)
-# email_from = '{}@test.com'.format(computername)
-# email_to = 'vetal_sv@bk.ru'
-# msg['From'] = email_from
-# msg['To'] = email_to
+computername = os.getenv('COMPUTERNAME')
+msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+msg['Subject'] = 'Test from {}!'.format(computername)
+email_from = '{}@test.com'.format(computername)
+email_to = 'vetal_sv@bk.ru'
+msg['From'] = email_from
+msg['To'] = email_to
 
-# s = smtplib.SMTP('127.0.0.1')
-# s.sendmail(email_from, [email_to], msg.as_string())
-# s.quit()
+s = smtplib.SMTP('127.0.0.1')
+s.sendmail(email_from, [email_to], msg.as_string())
+s.quit()
