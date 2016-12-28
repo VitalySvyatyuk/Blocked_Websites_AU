@@ -4,48 +4,56 @@ import socket, os, shutil, datetime
 to_git = False
 updates = {}
 for file in os.listdir("hosts"):
-    PATH_TO_FILE_TMP = 'hosts/' + file + '.tmp'
-    PATH_TO_FILE = 'hosts/' + file
+    if not file.endswith('_vars') or file.endswith('.tmp'):
+        PATH_TO_FILE_TMP = 'hosts/' + file + '.tmp'
+        PATH_TO_FILE = 'hosts/' + file
+        PATH_TO_FILE_VARS = 'hosts/' + file + '_vars'
 
-    if not os.path.isfile(PATH_TO_FILE_TMP):
-        os.mknod(PATH_TO_FILE_TMP)
+        if not os.path.isfile(PATH_TO_FILE_VARS):
+            shutil.copy(PATH_TO_FILE, PATH_TO_FILE_VARS)
+        if not os.path.isfile(PATH_TO_FILE_TMP):
+            os.mknod(PATH_TO_FILE_TMP)
 
-    with open(PATH_TO_FILE_TMP, 'w') as hosts_tmp:
-        with open(PATH_TO_FILE, 'r') as hosts:
-            update_lines = []
-            for line in hosts:
-                line = line.rstrip("\n")
-                line_ip = line.split(" ")[0]
+        with open(PATH_TO_FILE_VARS, 'r') as hosts_vars:
+            pass
+        print(hosts_vars)
+        with open(PATH_TO_FILE_TMP, 'w') as hosts_tmp:
+            with open(PATH_TO_FILE, 'r') as hosts:
 
-                try:
-                    new_line = socket.gethostbyname_ex(line.split(" ")[1])
-                    print(new_line)
-                    print(line_ip)
+                update_lines = []
+                for line in hosts:
+                    line = line.rstrip("\n")
+                    line_ip = line.split(" ")[0]
 
-                    if line_ip in new_line[2]:
-                        hosts_tmp.write(line + "\n")
-                        print("They are the same")
-                    else:
-                        new_line_to_write = new_line[2][0] + " " + new_line[0] + "\n"
-                        hosts_tmp.write(new_line_to_write)
-                        print("Hey! There is a new line!->>>>>>>>>>>>")
-                        to_git = True
-                        update_lines.append(new_line[0] + " -> from " + line_ip + " to " + new_line[2])
-                except (socket.gaierror, socket.herror):
-                    pass
-            if len(update_lines) != 0:
-                updates[file] = update_lines
+                    try:
+                        new_line = socket.gethostbyname_ex(line.split(" ")[1])
+                        print(new_line)
+                        print(line_ip)
 
-    shutil.move(PATH_TO_FILE_TMP, PATH_TO_FILE)
-    if os.path.isfile(PATH_TO_FILE_TMP):
-        os.remove(PATH_TO_FILE_TMP)
+                        if line_ip in new_line[2]: #or line_ip in vars:
+                            hosts_tmp.write(line + "\n")
+                            print("They are the same")
+                        else:
+                            new_line_to_write = new_line[2][0] + " " + new_line[0] + "\n"
+                            hosts_tmp.write(new_line_to_write)
+                            print("Hey! There is a new line!->>>>>>>>>>>>")
+                            to_git = True
+                            update_lines.append(new_line[0] + " -> from " + line_ip + " to " + new_line[2][0])
+                    except (socket.gaierror, socket.herror):
+                        pass
+                if len(update_lines) != 0:
+                    updates[file] = update_lines
+
+        shutil.move(PATH_TO_FILE_TMP, PATH_TO_FILE)
+        if os.path.isfile(PATH_TO_FILE_TMP):
+            os.remove(PATH_TO_FILE_TMP)
 
 print(updates)
 if to_git:
     with open('README.md', 'a') as readme:
         for key, values in updates.items():  
             readme.write("\n")         
-            readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " --->")
+            readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " : ")
             for val in values:
                 readme.write("\n" + val)
             readme.write("\n")
