@@ -58,6 +58,7 @@ for file in os.listdir("vars"):
 print updates
 
 if to_git:
+    import sh
     with open('README.md', 'a') as readme:
         for key, values in updates.items():  
             readme.write("\n")         
@@ -65,20 +66,28 @@ if to_git:
             for val in values:
                 readme.write("\n" + val)
             readme.write("\n")
- 
+    
 
-# --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
-import smtplib
-from email.mime.text import MIMEText
+    git = sh.git.bake(_cwd=os.getcwd())
+    git.add('*')
+    git.commit(m='Update ' + str(datetime.datetime.now())[:19])
+    git.push('origin', 'master')
 
-computername = os.getenv('COMPUTERNAME')
-msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
-msg['Subject'] = 'Test from {}!'.format(computername)
-email_from = '{}@test.com'.format(computername)
-email_to = 'vetal_sv@bk.ru'
-msg['From'] = email_from
-msg['To'] = email_to
 
-s = smtplib.SMTP('127.0.0.1')
-s.sendmail(email_from, [email_to], msg.as_string())
-s.quit()
+
+
+# # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
+# import smtplib
+# from email.mime.text import MIMEText
+
+# computername = os.getenv('COMPUTERNAME')
+# msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+# msg['Subject'] = 'Test from {}!'.format(computername)
+# email_from = '{}@test.com'.format(computername)
+# email_to = 'vetal_sv@bk.ru'
+# msg['From'] = email_from
+# msg['To'] = email_to
+
+# s = smtplib.SMTP('127.0.0.1')
+# s.sendmail(email_from, [email_to], msg.as_string())
+# s.quit()
