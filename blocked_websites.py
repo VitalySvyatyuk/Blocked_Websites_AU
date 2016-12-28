@@ -74,18 +74,18 @@ if to_git:
     git.push('origin', 'master')
 
 
-# # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
-# import smtplib
-# from email.mime.text import MIMEText
+# --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
+import smtplib
+from email.mime.text import MIMEText
 
-# computername = os.getenv('COMPUTERNAME')
-# msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
-# msg['Subject'] = 'Test from {}!'.format(computername)
-# email_from = '{}@test.com'.format(computername)
-# email_to = 'vetal_sv@bk.ru'
-# msg['From'] = email_from
-# msg['To'] = email_to
+computername = os.getenv('COMPUTERNAME')
+msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+msg['Subject'] = 'Test from {}!'.format(computername)
+email_from = '{}@test.com'.format(computername)
+email_to = 'vetal_sv@bk.ru'
+msg['From'] = email_from
+msg['To'] = email_to
 
-# s = smtplib.SMTP('127.0.0.1')
-# s.sendmail(email_from, [email_to], msg.as_string())
-# s.quit()
+s = smtplib.SMTP('127.0.0.1')
+s.sendmail(email_from, [email_to], msg.as_string())
+s.quit()
