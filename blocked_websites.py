@@ -80,9 +80,12 @@ if to_git:
 # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
 import smtplib
 from email.mime.text import MIMEText
-
+if to_git:
+    to_g = "Commited to Git"
+else:
+    to_g = "Nothing to commit"
 computername = os.getenv('COMPUTERNAME')
-msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+msg = MIMEText('Hello from {} {}'.format(datetime.datetime.now(), to_g))
 msg['Subject'] = 'Test from {}!'.format(computername)
 email_from = '{}@test.com'.format(computername)
 email_to = 'vetal_sv@bk.ru'
