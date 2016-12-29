@@ -39,7 +39,7 @@ for file in os.listdir("vars"):
                             to_git = True
                             update_lines.append(new_line[0])
                     except (socket.gaierror, socket.herror):
-                        pass
+                        hosts_tmp.write(line.split(" ")[0] + "\n")
                 if len(update_lines) != 0:
                     updates[file] = update_lines
 
@@ -53,8 +53,11 @@ for file in os.listdir("vars"):
         with open(PATH_TO_FILE_VARS, 'r') as _vars:
             with open(PATH_TO_FILE, 'w') as hosts:
                 for _var in _vars:
-                    new_host_line = _var.split(" ")[1].rstrip("\n") + " " + _var.split(" ")[0]
-                    hosts.write(new_host_line + "\n")
+                    try:
+                        new_host_line = _var.split(" ")[1].rstrip("\n") + " " + _var.split(" ")[0]
+                        hosts.write(new_host_line + "\n")
+                    except IndexError:
+                        pass
 print updates
 
 if to_git:
@@ -75,17 +78,17 @@ if to_git:
 
 
 # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
-import smtplib
-from email.mime.text import MIMEText
+# import smtplib
+# from email.mime.text import MIMEText
 
-computername = os.getenv('COMPUTERNAME')
-msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
-msg['Subject'] = 'Test from {}!'.format(computername)
-email_from = '{}@test.com'.format(computername)
-email_to = 'vetal_sv@bk.ru'
-msg['From'] = email_from
-msg['To'] = email_to
+# computername = os.getenv('COMPUTERNAME')
+# msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+# msg['Subject'] = 'Test from {}!'.format(computername)
+# email_from = '{}@test.com'.format(computername)
+# email_to = 'vetal_sv@bk.ru'
+# msg['From'] = email_from
+# msg['To'] = email_to
 
-s = smtplib.SMTP('127.0.0.1')
-s.sendmail(email_from, [email_to], msg.as_string())
-s.quit()
+# s = smtplib.SMTP('127.0.0.1')
+# s.sendmail(email_from, [email_to], msg.as_string())
+# s.quit()
