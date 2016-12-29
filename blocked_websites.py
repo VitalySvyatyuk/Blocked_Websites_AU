@@ -60,35 +60,35 @@ for file in os.listdir("vars"):
                         pass
 print updates
 
-# if to_git:
-#     import sh
-#     with open('README.md', 'a') as readme:
-#         for key, values in updates.items():  
-#             readme.write("\n")         
-#             readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " --->")
-#             for val in values:
-#                 readme.write("\n\n" + val)
-#             readme.write("\n")
-    
+if to_git:
+    import sh
+    with open('README.md', 'a') as readme:
+        for key, values in updates.items():  
+            readme.write("\n")         
+            readme.write("\n<--- Update for " + key + " from " + str(datetime.datetime.now())[:19] + " --->")
+            for val in values:
+                readme.write("\n\n" + val)
+            readme.write("\n")
 
-#     git = sh.git.bake(_cwd=os.getcwd())
-#     git.add('*')
-#     git.commit(m='Update ' + str(datetime.datetime.now())[:19])
-#     git.push('origin', 'master')
+    
+    git = sh.git.bake(_cwd=os.getcwd())
+    git.add('*')
+    git.commit(m='Update ' + str(datetime.datetime.now())[:19])
+    git.push('origin', 'master')
 
 
 # --- EMAIL SENDING FOR CHECKING SCRIPT WORKING ---
-# import smtplib
-# from email.mime.text import MIMEText
+import smtplib
+from email.mime.text import MIMEText
 
-# computername = os.getenv('COMPUTERNAME')
-# msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
-# msg['Subject'] = 'Test from {}!'.format(computername)
-# email_from = '{}@test.com'.format(computername)
-# email_to = 'vetal_sv@bk.ru'
-# msg['From'] = email_from
-# msg['To'] = email_to
+computername = os.getenv('COMPUTERNAME')
+msg = MIMEText('Hello from {}'.format(datetime.datetime.now()))
+msg['Subject'] = 'Test from {}!'.format(computername)
+email_from = '{}@test.com'.format(computername)
+email_to = 'vetal_sv@bk.ru'
+msg['From'] = email_from
+msg['To'] = email_to
 
-# s = smtplib.SMTP('127.0.0.1')
-# s.sendmail(email_from, [email_to], msg.as_string())
-# s.quit()
+s = smtplib.SMTP('127.0.0.1')
+s.sendmail(email_from, [email_to], msg.as_string())
+s.quit()
