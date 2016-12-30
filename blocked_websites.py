@@ -7,41 +7,46 @@ for file in os.listdir("vars"):
         PATH_TO_FILE = 'hosts/' + file.rstrip("_vars")
         PATH_TO_FILE_TMP = 'vars/' + file.rstrip("_vars") + ".tmp"
         PATH_TO_FILE_VARS = 'vars/' + file
+        PATH_TO_FILE_DEAD = 'dead/' + file.rstrip("_vars") + "_dead"
 
         if not os.path.isfile(PATH_TO_FILE_TMP):
             os.mknod(PATH_TO_FILE_TMP)
 
         with open(PATH_TO_FILE_TMP, 'w') as hosts_tmp:
             with open(PATH_TO_FILE_VARS, 'r') as _vars:
-                update_lines = []
-                for line in _vars:
-                    line = line.rstrip("\n")
-                    line_ips = set(line.split(" ")[1:])
-                    ips = ""
-         
-                    try:
-                        new_line = socket.gethostbyname_ex(line.split(" ")[0])
+                with open(PATH_TO_FILE_DEAD, 'w') as _dead:
+                    update_lines = []
+                    for line in _vars:
+                        line = line.rstrip("\n")
+                        line_ips = set(line.split(" ")[1:])
+                        ips = ""
+             
+                        try:
+                            new_line = socket.gethostbyname_ex(line.split(" ")[0])
 
-                        new_line_ips = set(new_line[2])
+                            new_line_ips = set(new_line[2])
 
-                        if line_ips == new_line_ips or line_ips.issuperset(new_line_ips):
-                            hosts_tmp.write(line + "\n")
-                            print "They are the same"
-                        else:
-                            new_ips = line_ips.union(new_line_ips)
-         
-                            for ip in new_ips:
-                                ips += ip + " "
-                            new_line_to_write = new_line[0] + " " + ips.rstrip(" ") + "\n"
-         
-                            hosts_tmp.write(new_line_to_write)
-                            print "Hey! There is a new line!->>>>>>>>>>"
-                            to_git = True
-                            update_lines.append(new_line[0])
-                    except (socket.gaierror, socket.herror):
-                        hosts_tmp.write(line.split(" ")[0] + "\n")
-                if len(update_lines) != 0:
-                    updates[file] = update_lines
+                            if line_ips == new_line_ips or line_ips.issuperset(new_line_ips):
+                                hosts_tmp.write(line + "\n")
+                                print "They are the same"
+                            else:
+                                new_ips = line_ips.union(new_line_ips)
+             
+                                for ip in new_ips:
+                                    ips += ip + " "
+                                new_line_to_write = new_line[0] + " " + ips.rstrip(" ") + "\n"
+             
+                                hosts_tmp.write(new_line_to_write)
+                                print "Hey! There is a new line!->>>>>>>>>>"
+                                to_git = True
+                                update_lines.append(new_line[0])
+                        except (socket.gaierror, socket.herror):
+                            hosts_tmp.write(line.split(" ")[0] + "\n")
+                            if not os.path.isfile(PATH_TO_FILE_DEAD):
+                                shutil.mknod(PATH_TO_FILE_DEAD)
+                            _dead.write(line.split(" ")[0] + "\n")
+                    if len(update_lines) != 0:
+                        updates[file] = update_lines
 
         shutil.move(PATH_TO_FILE_TMP, PATH_TO_FILE_VARS)
         if os.path.isfile(PATH_TO_FILE_TMP):
