@@ -93,7 +93,7 @@ if to_git:
 # msg = MIMEText('Hello from {} {}'.format(datetime.datetime.now(), to_g))
 # msg['Subject'] = 'Test from {}!'.format(computername)
 # email_from = '{}@test.com'.format(computername)
-# email_to = 'vetal_sv@bk.ru'
+# email_to = 'd357cbh@yandex.ru'
 # msg['From'] = email_from
 # msg['To'] = email_to
 
